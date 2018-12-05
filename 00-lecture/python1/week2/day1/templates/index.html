@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" 
+   href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+  <link rel="stylesheet" type="text/css" 
+   href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+  <title>Document</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Fill out this form!</h1>
+    <h2>{{ stuff }}</h2>
+    <ul>
+      {% for item in stuff %}
+        <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+    <form action="/process" method="post">
+      <label for="first-name">First Name:</label>
+      <input type="text" name="first-name" placeholder="Vanilla">
+      <label for="last-name">Last Name:</label>
+      <input type="text" name="last-name" placeholder="Ice">
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+</body>
+</html>
