@@ -4,9 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <link rel="stylesheet" type="text/css" 
+   href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+  <link rel="stylesheet" type="text/css" 
+   href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+   <title>Ninja Gold</title>
 </head>
 <body>
-  <h1>This is the dashboard</h1>
+  <div class="container">
+    {{ activities }}
+    <h1>Hello, {{ user['first_name'] }}</h1>
+    <div class="gold">
+      <p>Current Total: <span>{{ user['gold'] }}</span></p>
+    </div>
+    <div class="locations">
+      {% for location in locations %} 
+        <div class="location">
+          <form action="/process" method="post">
+            <h4>{{ location['name'] }}</h4>
+            <p>Earns {{ location['min_gold'] }}-{{ location['max_gold'] }} Gold</p>
+            <input type="hidden" name="location" value="{{ location['id'] }}">
+            <input type="submit" value="Visit {{ location['name'] }}">
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="activities">
+      {% for activity in activities %}
+        {% if activity['gold_amount'] >= 0%}
+          <p class="green">You earned {{ activity['gold_amount'] }} golds at the N/A at {{ activity['created_at'] }}</p>
+        {% else %}
+          <p class="red">You lost {{ activity['gold_amount'] }} golds at the N/A at {{ activity['created_at'] }}</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from flask import Flask, session, render_template, request, flash, redirect
 from flask_bcrypt import Bcrypt
-from helpers import users
+from helpers import users, locations, activities
 
 SCHEMA = 'ninja_gold_december'
 
@@ -15,7 +15,12 @@ app.secret_key = 'as;ldkfjasdl;fashldkfwjkefawe'
 def index():
   if 'user_id' not in session:
     return redirect('/users/new')
-  return render_template('index.html')
+
+  return render_template('index.html',
+    user = users.get_current(session['user_id']),
+    locations = locations.get_all(),
+    activities = activities.get_all_for_current_user(session['user_id'])
+  )
 
 @app.route('/users/new')
 def new_user():
@@ -35,7 +40,14 @@ def create():
 
 @app.route('/login', methods=['POST'])
 def login():
-  pass
+  valid, response = users.check_login(request.form, bcrypt)
+  if valid:
+    session['user_id'] = response
+    return redirect('/')
+  else:
+    for error in response:
+      flash(error)
+    return redirect('/users/new')
 
 if __name__ == "__main__":
   app.run(debug=True)

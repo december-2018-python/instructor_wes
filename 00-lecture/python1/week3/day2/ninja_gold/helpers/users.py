@@ -33,3 +33,35 @@ def create(form_data, bcrypt):
   }
   user_id = db.query_db(query, data)
   return user_id
+
+def check_login(form_data, bcrypt):
+  errors = []
+
+  db = connectToMySQL(SCHEMA)
+  query = 'SELECT email, pw_hash, id FROM users WHERE email = %(email)s;'
+  data = {
+    "email": form_data['email']
+  }
+  user_list = db.query_db(query, data)
+  if not user_list:
+    errors.append("Email or password incorrect")
+  else:
+    user = user_list[0]
+    if bcrypt.check_password_hash(user['pw_hash'], form_data['password']):
+      # user is good, log them in
+      return (True, user['id'])
+    else:
+      errors.append("Email or password incorrect")
+
+  return (False, errors)
+
+def get_current(user_id):
+  db = connectToMySQL(SCHEMA)
+  query = 'SELECT * FROM users WHERE id = %(user_id)s;'
+  data = {
+    "user_id": user_id
+  }
+  # user_list = db.query_db(query, data)
+  # user = user_list[0]
+  # return user
+  return db.query_db(query, data)[0]
