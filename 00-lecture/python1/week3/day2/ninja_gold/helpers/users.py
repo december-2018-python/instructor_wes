@@ -65,3 +65,12 @@ def get_current(user_id):
   # user = user_list[0]
   # return user
   return db.query_db(query, data)[0]
+
+def update_user_gold(user_id, gold):
+  db = connectToMySQL(SCHEMA)
+  query = 'UPDATE users SET gold = gold + %(gold)s WHERE id = %(user_id)s;'
+  data = {
+    'gold': gold,
+    'user_id': user_id
+  }
+  return db.query_db(query, data)

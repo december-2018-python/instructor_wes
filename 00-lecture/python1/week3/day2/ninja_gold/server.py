@@ -49,5 +49,21 @@ def login():
       flash(error)
     return redirect('/users/new')
 
+@app.route('/logout')
+def logout():
+  session.clear()
+  return redirect('/users/new')
+
+@app.route('/process', methods=['POST'])
+def process():
+  if 'user_id' not in session:
+    return redirect('/users/new')
+
+  location_id = int(request.form['location'])
+  gold = locations.calculate_gold_with_id(location_id)
+  activities.create_activity(gold, session['user_id'], location_id)
+  users.update_user_gold(session['user_id'], gold)
+  return redirect('/')
+
 if __name__ == "__main__":
   app.run(debug=True)
