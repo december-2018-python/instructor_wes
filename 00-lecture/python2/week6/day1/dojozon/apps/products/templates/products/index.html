@@ -13,7 +13,62 @@
 <body>
   <div class="container">
     <h1>Successfully Logged In</h1>
+    <a href="{% url 'products:new' %}" class="button">Create Product</a>
     <a href="{% url 'users:logout' %}" class="button">Logout</a>
+    <div class="purchasable">
+      <h2>Products Available For Purchase</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Num Available</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Creator</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in purchasable_products %}
+            <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.num_available }}</td>
+              <td>${{ product.price }}</td>
+              <td>{{ product.description }}</td>
+              <td>{{ product.creator.first_name }} {{ product.creator.last_name }}</td>
+              <td>N/A</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="sellable">
+      <h2>Products You're Selling</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Num Available</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Creator</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in sellable_products %}
+            <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.num_available }}</td>
+              <td>${{ product.price }}</td>
+              <td>{{ product.description }}</td>
+              <td>{{ product.creator.first_name }} {{ product.creator.last_name }}</td>
+              <td>N/A</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 </html>
