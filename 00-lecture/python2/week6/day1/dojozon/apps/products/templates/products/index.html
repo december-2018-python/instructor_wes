@@ -31,12 +31,16 @@
         <tbody>
           {% for product in purchasable_products %}
             <tr>
-              <td>{{ product.name }}</td>
+              <td>
+                <a href="{% url 'products:show' product.id %}">{{ product.name }}</a>
+              </td>
               <td>{{ product.num_available }}</td>
               <td>${{ product.price }}</td>
               <td>{{ product.description }}</td>
               <td>{{ product.creator.first_name }} {{ product.creator.last_name }}</td>
-              <td>N/A</td>
+              <td>
+                <a href="" class="button">Purchase</a>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -58,12 +62,20 @@
         <tbody>
           {% for product in sellable_products %}
             <tr>
-              <td>{{ product.name }}</td>
+              <td>
+                <a href="{% url 'products:show' product.id %}">{{ product.name }}</a>
+              </td>
               <td>{{ product.num_available }}</td>
               <td>${{ product.price }}</td>
               <td>{{ product.description }}</td>
               <td>{{ product.creator.first_name }} {{ product.creator.last_name }}</td>
-              <td>N/A</td>
+              <td>
+                <a href="{% url 'products:edit' product.id %}" class="button">Edit Product</a>
+                <form action="{% url 'products:delete' product.id %}" method="post">
+                  {% csrf_token %}
+                  <input type="submit" value="Delete Product">
+                </form>
+              </td>
             </tr>
           {% endfor %}
         </tbody>

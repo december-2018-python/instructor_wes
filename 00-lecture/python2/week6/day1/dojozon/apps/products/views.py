@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Product
 
 # Create your views here.
@@ -16,11 +17,33 @@ def index(req):
 def new(req):
   return render(req, 'products/new.html')
 
-def show(req):
-  pass
+def show(req, product_id):
+  if 'user_id' not in req.session:
+    return redirect('users:new')
 
-def edit(req):
-  pass
+  try:
+    context = {
+      'product': Product.objects.get(id=product_id)
+    }
+  except ObjectDoesNotExist:
+    return redirect('products:index')
+
+  return render(req, 'products/show.html', context)
+
+def edit(req, product_id):
+  if 'user_id' not in req.session:
+    return redirect('users:new')
+
+  # TODO - Implement validation so only owners of the product can access the edit page.
+
+  try:
+    context = {
+      'product': Product.objects.get(id=product_id)
+    }
+  except ObjectDoesNotExist:
+    return redirect('products:index')
+
+  return render(req, 'products/edit.html', context)
 
 def create(req):
   errors = Product.objects.validate(req.POST)
@@ -32,8 +55,20 @@ def create(req):
   Product.objects.create_product(req.POST, req.session['user_id'])
   return redirect('products:index')
 
-def update(req):
-  pass
+def update(req, product_id):
+  errors = Product.objects.validate(req.POST)
+  if errors:
+    for error in errors:
+      messages.error(req, error)
+    return redirect('products:edit', product_id=product_id)
 
-def delete(req):
-  pass
+  Product.objects.update(req.POST, product_id)
+  return redirect('products:index')
+
+def delete(req, product_id):
+  try:
+    product = Product.objects.get(id=product_id)
+    product.delete()
+  except ObjectDoesNotExist:
+    print('TRIED TO DELETE PRODUCT #{}, DOES NOT EXIST'.format(product_id))
+  return redirect('products:index')

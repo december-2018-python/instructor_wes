@@ -41,6 +41,17 @@ class ProductManager(models.Manager):
       creator=user,
     )
 
+  def update(self, form_data, product_id):
+    product = self.get(id=product_id)
+
+    price = Decimal(form_data['price']).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+
+    product.name = form_data['name']
+    product.num_available = int(form_data['num_available'])
+    product.price = price
+    product.description = form_data['description']
+    product.save()
+
 class Product(models.Model):
   name = models.CharField(max_length=255)
   num_available = models.IntegerField()
