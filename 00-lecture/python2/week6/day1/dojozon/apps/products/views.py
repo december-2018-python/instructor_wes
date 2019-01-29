@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Product
+from ..users.models import User
 
 # Create your views here.
 def index(req):
@@ -9,8 +10,8 @@ def index(req):
     return redirect('users:new')
 
   context = {
-    'purchasable_products': Product.objects.exclude(creator=req.session['user_id']),
-    'sellable_products': Product.objects.filter(creator=req.session['user_id']),
+    'purchasable_products': Product.objects.exclude(creator=req.session['user_id']).exclude(num_available__lte=0),
+    'user': User.objects.get(id=req.session['user_id']),
   }
   return render(req, 'products/index.html', context)
 
