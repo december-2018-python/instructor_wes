@@ -5,11 +5,23 @@ from ..products.models import Product
 # Create your models here.
 class OrderManager(models.Manager):
   def add_product(self, form_data, user_id):
+    # cart is the current order, cart is an Order object
     cart = self.get_active_cart(user_id)
     product = Product.objects.get(id=form_data['product_id'])
-    cart.products.add(product)
-    cart.save()
-    product.num_available = product.num_available - 1
+    # check to see if order already has at least one of current product attached
+    attached_products = cart.order_products.filter(product=product.id)
+    print(attached_products)
+    if attached_products:
+      order_item = attached_products[0]
+      order_item.amount += 1
+      order_item.save()
+    else:
+      OrderProduct.objects.create(
+        product = product,
+        order = cart,
+        amount = 1
+      )
+    product.num_available -= 1
     product.save()
     return
   
@@ -28,12 +40,28 @@ class OrderManager(models.Manager):
       in_progress = False,
       user = user,
     )
+  
+  def place_order(self, order_id, user_id):
+    order = self.get(id=order_id)
+    order.in_progress = True
+    order.save()
+    self.create_default_order(user_id)
+    return
 
 class Order(models.Model):
   is_fulfilled = models.BooleanField()
   in_progress = models.BooleanField()
   user = models.ForeignKey(User, related_name="orders")
-  products = models.ManyToManyField(Product, related_name="orders")
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
   objects = OrderManager()
+
+class OrderProductManager(models.Manager):
+  pass
+
+class OrderProduct(models.Model):
+  product = models.ForeignKey(Product, related_name="order_products")
+  order = models.ForeignKey(Order, related_name="order_products")
+  amount = models.IntegerField()
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)

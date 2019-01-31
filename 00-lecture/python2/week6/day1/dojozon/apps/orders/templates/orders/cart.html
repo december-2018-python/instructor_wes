@@ -21,20 +21,26 @@
           <th>Product Name</th>
           <th>Price</th>
           <th>Quantity</th>
+          <th>Subtotal</th>
         </tr>
       </thead>
       <tbody>
-        {% for product in cart.products.all %}
+        {% for item in cart %}
           <tr>
-            {{ product }}
-            <td>{{ product.name }}</td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.count }}</td>
+            <td>{{ item.item }}</td>
+            <td>${{ item.price }}</td>
+            <td>{{ item.amount }}</td>
+            <td>${{ item.subtotal }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-    <a href="" class="button">Place Order</a>
+    <p>Total: ${{ total }}</p>
+    <form action="{% url 'orders:place_order' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="order_id" value="{{ order_id }}">
+      <input type="submit" value="Place Order">
+    </form>
   </div>
 </body>
 </html>

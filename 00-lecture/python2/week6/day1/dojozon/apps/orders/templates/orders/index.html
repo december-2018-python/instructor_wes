@@ -19,30 +19,18 @@
       <thead>
         <tr>
           <th>Order Number</th>
-          <th>Order Price</th>
           <th>In Progress</th>
           <th>Fulfilled</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>$20.00</td>
-          <td>False</td>
-          <td>True</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>$20.00</td>
-          <td>False</td>
-          <td>True</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>$20.00</td>
-          <td>False</td>
-          <td>True</td>
-        </tr>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.in_progress }}</td>
+            <td>{{ order.is_fulfilled }}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
